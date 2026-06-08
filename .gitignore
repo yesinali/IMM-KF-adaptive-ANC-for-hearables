@@ -1,0 +1,43 @@
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+*.egg-info/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# ---- Generated outputs ----
+figures/
+*.wav
+*.flac
+*.npz
+*.log
+
+# ---- C build artifacts ----
+c_imm/*.exe
+c_imm/*.o
+c_imm/*.bin
+
+# ---- User-supplied data (keep the README placeholders) ----
+musics/*
+!musics/README.md
+noise_samples/**/*.wav
+noise_samples/**/*.flac
+noise_samples/**/*.ogg
+noise_samples/**/*.mp3
+
+# ---- LaTeX ----
+*.aux
+*.synctex.gz
+*.out
+*.toc
+
+# ---- OS / editors / tooling ----
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+.claude/
