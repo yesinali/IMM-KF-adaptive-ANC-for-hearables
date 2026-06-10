@@ -1,4 +1,4 @@
-# Adaptive ANC for Hearables — IMM-Kalman Filter
+# Adaptive Active Noise Cancellation for Hearables using Interacting Multiple Model (IMM) Filters
 
 > A Bayesian adaptive active-noise-cancellation (ANC) controller that runs **four
 > parallel Kalman filters** — one per acoustic environment — and blends them with
@@ -55,9 +55,10 @@ Two things make this repo more than a number-cruncher:
 - **Perceptual metrics** that bridge numbers and feel — A-weighted (dBA) loudness drop,
   band-split & 1/3-octave NR, and a musical-noise / transient index
   ([`src/perceptual.py`](src/perceptual.py)).
-- **Unified interactive app** — a multipage Streamlit demo: a *Performance Lab* (run the
-  controller, inspect NR / mode tracking / per-frequency plots) and a *Music & Feel* page
-  (hear the loudness ladder and a music A/B), [`app/`](app/).
+- **Unified interactive app** — a multipage Streamlit demo: a *Performance Lab* (one-click
+  demo presets, session run history with an instant run selector, overlay comparison of
+  NR curves across runs, spectrogram / mode-posterior / per-frequency plots) and a
+  *Music & Feel* page (hear the loudness ladder and a music A/B), [`app/`](app/).
 - **Reproducible evaluation** — Monte Carlo over random acoustic plants:
   **+16.06 ± 1.77 dB** noise reduction (N = 15).
 
@@ -158,7 +159,10 @@ Opens a multipage app in your browser:
 
 - **🎛️ Performance Lab** — pick a scenario + algorithm + backend, run the controller live,
   and inspect noise reduction, mode tracking, real-time factor, per-frequency NR, and the
-  perceptual bridge metrics.
+  perceptual bridge metrics. Three **demo presets** (proposed IMM-v5 / quiet-Kalman trap /
+  NLMS baseline) configure and run with one click; every run is kept in a session
+  **history** so you can flip between results instantly and **overlay** their NR-over-time
+  curves on one axis — the fastest way to *see* the IMM-vs-fixed-filter gap.
 - **🎵 Music & Feel** — render live and *listen*: the loudness ladder (open ear → ANC off →
   ANC on, at a shared gain) and a music A/B that shows whether the controller keeps the
   music intact while removing the noise.

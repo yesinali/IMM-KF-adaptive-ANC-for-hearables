@@ -145,6 +145,11 @@ Arayüzde 2 ana alan var:
 
 ### 5.1 Sol panel (sidebar) — ayarlar
 
+#### 🚀 Demo presets (en üstte — kestirme)
+Üç hazır buton: **IMM-KF (v5)**, **Quiet-Kalman trap**, **NLMS baseline**. Birine basınca
+algoritma + parametreler otomatik kurulur ve simülasyon **kendiliğinden başlar** — aşağıdaki
+ayarlarla tek tek uğraşmak istemiyorsan buradan başla.
+
 #### Audio source (ses kaynağı)
 - **Synthetic:** Hazır sentetik senaryo
 - **Upload WAV:** Kendi ses dosyanı yükle
@@ -170,18 +175,30 @@ FIR filtre uzunluğu. **64'te bırak** — değiştirmeye gerek yok.
 - **Kalman seçtiysen:** `log10(σ_q²)` ve `log10(σ_r²)` — bu Q ve R değerlerinin 10 üssü cinsinden ifadesi. Yavaş Kalman için: Q=-12, R=0. Hızlı Kalman için: Q=-5, R=2.
 - **IMM seçtiysen:** `Likelihood window` — mod kararının zaman pencereli yumuşatması. **200'de bırak.**
 
+#### Compute backend
+- **Python NumPy:** Varsayılan; IMM'in mod-posteriörü grafiği için gerekli.
+- **Pure C / OpenBLAS:** C portu derlenmişse görünür (bkz. README, kurulum bölümü).
+  ~9 kat hızlı, sonuç bire bir aynı.
+
 #### Run butonu
-Mavi büyük tuş — bütün ayarları tamamladıktan sonra basacaksın.
+Mavi büyük tuş — ayarları elle kurduysan basacaksın (preset kullandıysan gerek yok).
 
 ### 5.2 Ana panel — sonuçlar
 
-Run'a bastıktan sonra (algoritmaya göre 5-60 saniye sürer):
+Run bittikten sonra (algoritma ve backend'e göre 5 saniye – 3 dakika sürer):
 
-#### Üst kısım: 4 KPI kartı
-- **Overall NR:** Toplam gürültü azalması (dB cinsinden). **Yüksek olsun.**
-- **Audio length:** Test sesi süresi
-- **Mode tracking:** IMM kullandıysan, modları ne kadar doğru tanıdı (%)
-- **Filter length L:** kullandığın L değeri
+#### Run seçici ve geçmiş
+Aynı oturumdaki **her koşu hafızada tutulur** (en fazla 8). Sonuçların üstündeki
+**"📂 Showing results of run"** menüsünden eski bir koşuyu seçersen tüm kartlar,
+sesler ve grafikler **anında** o koşuya döner — yeniden hesaplama yok. Altta açılan
+**"📚 Compare with previous runs"** tablosunda koşular yan yana (her satırda kalıntının
+ses oynatıcısı da var).
+
+#### Üst kısım: 2 sıra KPI kartı
+- **Overall NR:** Toplam gürültü azalması (dB). **Yüksek olsun.**
+- **Audio length / Mode tracking / backend hızı (µs-sample, RTF):** koşu bilgileri
+- İkinci sıra **algı metrikleri:** algılanan ses düşüşü dB(A), alçak/yüksek bant NR,
+  müziksel-gürültü indeksi (düşük = daha doğal kalıntı)
 
 #### Audio comparison (ses karşılaştırma)
 **İki ses oynatıcı:**
@@ -189,11 +206,17 @@ Run'a bastıktan sonra (algoritmaya göre 5-60 saniye sürer):
 - **Sağda:** ANC sonrası kalan e(k) — ANC açıkken kulağına gelen
 
 **Sırayla ikisini de dinle**, farkı kulağınla duyuyor musun? Bu demonun en güzel kısmı.
+(Sidebar'daki "virtual headphone" kutusunu işaretlersen, seviye farkını koruyan
+kulaklık-simülasyonu sürümünü dinlersin.)
 
-#### Visualization (görselleştirme) — 3 sekme:
-- **Time domain:** Dalga şekilleri (üstte orijinal, altta ANC sonrası). Genliğin azalması beklenir.
-- **Noise reduction:** Zaman içinde NR'nin değişimi (dB grafiği). Yüksek = iyi.
-- **Mode posteriors:** Sadece IMM kullanırken anlamlı. IMM'in her zaman noktasında hangi modu seçtiğini gösterir.
+#### Visualization (görselleştirme) — 6 sekme:
+- **📈 Time domain:** Dalga şekilleri (üstte orijinal, altta ANC sonrası). Genliğin azalması beklenir.
+- **🌈 Spectrogram:** Önce/sonra spektrogramları, ortak renk skalası — ANC açılınca alçak bant kararır.
+- **📉 NR over time:** Zaman içinde NR'nin değişimi (dB grafiği). Yüksek = iyi.
+- **🎯 Mode posteriors:** Sadece IMM'de anlamlı. IMM'in her an hangi modu seçtiğini gösterir.
+- **🎚️ NR per frequency:** 1/3-oktav bantlarda azaltım — aktif ANC alçak frekanslarda çalışır.
+- **🆚 Overlay runs:** Geçmişteki koşuların NR eğrileri **tek eksende üst üste** — IMM ile
+  sabit filtre arasındaki farkı tek grafikte görmenin en hızlı yolu.
 
 ---
 
@@ -217,11 +240,12 @@ Sırayla şunları dene, sonuçları karşılaştır:
 
 ### Deney 3 — Yavaş Kalman çöküşü (projenin asıl bulgusu)
 1. Aynı senaryo (mode-conditioned plants **açık** kalsın — bu kritik)
-2. Method: **Kalman (single mode)**
-3. `log_q = -12`, `log_r = 0` (yavaş, hassas filtre)
-4. Run
-5. Beklenti: **NR çok düşük** (örn. +2 dB), çünkü yavaş filtre ortam değişimlerine adapte olamıyor
-6. Sesi dinle — gürültü neredeyse hiç azalmamış gibi gelecek
+2. Sidebar'ın en üstündeki **🪤 Quiet-Kalman trap** preset'ine bas (elle kurmak istersen:
+   Kalman (single mode), `log_q = -12`, `log_r = 2`)
+3. Beklenti: **NR çok düşük** (örn. +2 dB), çünkü yavaş filtre ortam değişimlerine adapte olamıyor
+4. Sesi dinle — gürültü neredeyse hiç azalmamış gibi gelecek
+5. **🆚 Overlay runs** sekmesini aç: Deney 1'deki IMM eğrisiyle bu koşu aynı eksende —
+   fark tek bakışta görünür
 
 Bu deney projenin asıl tezini doğruluyor: "tek bir sabit ayar, çevre değişen ortamda yetersizdir."
 
