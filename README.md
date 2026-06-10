@@ -89,7 +89,8 @@ adaptive-anc-imm-kf/
 ├── c_imm/                      C port of the filter bank (sources + Makefile)
 ├── noise_samples/              drop real ambient recordings here (see its README)
 ├── musics/                     drop your own program music here (see its README)
-├── docs/USER_GUIDE.md          step-by-step Turkish quick-start
+├── docs/USER_GUIDE.md          step-by-step quick-start guide
+├── report/                     IEEE-style project report (LaTeX sources + PDF)
 └── requirements.txt
 ```
 
@@ -167,7 +168,7 @@ Opens a multipage app in your browser:
   ANC on, at a shared gain) and a music A/B that shows whether the controller keeps the
   music intact while removing the noise.
 
-A friendly step-by-step walkthrough (Turkish) is in [`docs/USER_GUIDE.md`](docs/USER_GUIDE.md).
+A friendly step-by-step walkthrough is in [`docs/USER_GUIDE.md`](docs/USER_GUIDE.md).
 
 ### Render the full test bench (files + metrics + plots)
 

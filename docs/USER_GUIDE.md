@@ -1,122 +1,122 @@
-# Kullanım Kılavuzu — IMM-KF Adaptive ANC Demo
+# User Guide — IMM-KF Adaptive ANC Demo
 
-Bu kılavuz, projenin **interaktif demosunu** sıfırdan kendi bilgisayarında çalıştırmak için her şeyi anlatır. Programlama bilgin olmasa bile takip edebilmen için adım adım yazılmıştır.
-
----
-
-## 1. Bu uygulama ne yapıyor?
-
-Kısaca: **Bir kulaklığın gürültü engelleme (ANC) algoritmasının PC üzerinde simülasyonu.**
-
-Kulaklığın çevresi sürekli değişir (sessiz oda → trafik → rüzgar → kalabalık). Klasik tek-ayarlı filtreler bu değişimlerde ya çok hassas kalıp tepki veremez ya çok agresif olup gereksiz gürültü ekler. Bu projede **IMM-KF** denilen Bayesian bir yöntem var — 4 farklı ayarı paralel çalıştırıp **otomatik karıştıran** akıllı bir filtre. Demoda bu algoritmayı klasik yöntemlerle karşılaştırıp **kulağınla farkı duyabiliyorsun.**
-
-Demoda yapabilecekler:
-- Sentetik gürültü senaryosu üret (sessiz/trafik/rüzgar/konuşma)
-- Veya kendi WAV ses dosyanı yükle
-- 3 farklı algoritmadan birini seç (NLMS / Kalman / IMM)
-- Ayarları slider'larla değiştir
-- Orijinal gürültüyü ve ANC sonrası kalan sesi **yan yana dinle**
-- Grafiklerde performansı incele
+This guide walks you through running the project's **interactive demo** from scratch on your own machine. It is written step by step so you can follow it even without a programming background.
 
 ---
 
-## 2. Sistem gereksinimleri
+## 1. What does this app do?
 
-| Gereksinim | Detay |
+In short: **a PC simulation of a headphone's noise-cancellation (ANC) algorithm.**
+
+The environment around a headphone changes constantly (quiet room → traffic → wind → crowd). Classical single-setting filters either stay too conservative to react, or run too aggressively and inject noise of their own. This project implements **IMM-KF**, a Bayesian method — a smart filter that runs 4 different tunings in parallel and **blends them automatically**. In the demo you compare this algorithm against classical methods and **hear the difference with your own ears.**
+
+What you can do in the demo:
+- Generate a synthetic noise scenario (quiet/traffic/wind/babble)
+- Or upload your own WAV file
+- Pick one of 3 algorithms (NLMS / Kalman / IMM)
+- Tweak the parameters with sliders
+- Listen to the original noise and the post-ANC residual **side by side**
+- Inspect the performance in plots
+
+---
+
+## 2. System requirements
+
+| Requirement | Detail |
 |---|---|
-| **İşletim sistemi** | Windows 10/11, macOS, veya Linux (hepsi çalışır) |
-| **Python** | 3.10 veya üstü |
-| **Disk** | ~500 MB (Python kütüphaneleri dahil) |
-| **RAM** | 4 GB yeter |
-| **Tarayıcı** | Chrome, Edge, Firefox veya Safari (güncel sürüm) |
-| **İnternet** | Sadece kurulum sırasında gerekli (paketleri indirmek için) |
+| **Operating system** | Windows 10/11, macOS, or Linux (all work) |
+| **Python** | 3.10 or newer |
+| **Disk** | ~500 MB (including Python packages) |
+| **RAM** | 4 GB is plenty |
+| **Browser** | Chrome, Edge, Firefox or Safari (current version) |
+| **Internet** | Only needed during installation (to download packages) |
 
-**Önemli:** Sesleri dinleyebilmek için hoparlör veya kulaklık olmalı.
+**Important:** you need speakers or headphones to listen to the audio.
 
 ---
 
-## 3. Kurulum (ilk seferlik, ~5 dakika)
+## 3. Installation (one-time, ~5 minutes)
 
-### Adım 3.1 — Python'un kurulu olup olmadığını kontrol et
+### Step 3.1 — Check whether Python is installed
 
-PowerShell veya CMD aç (Windows tuşu → "powershell" yaz → enter), şunu yaz:
+Open PowerShell or CMD (Windows key → type "powershell" → enter) and run:
 
 ```powershell
 python --version
 ```
 
-**Eğer "Python 3.10.x" veya üstü görüyorsan:** geç Adım 3.3'e.
+**If you see "Python 3.10.x" or newer:** skip to Step 3.3.
 
-**Eğer "command not found" veya hiç bir şey görmüyorsan:** Adım 3.2'ye git.
+**If you see "command not found" or nothing at all:** go to Step 3.2.
 
-### Adım 3.2 — Python kur (eğer yoksa)
+### Step 3.2 — Install Python (if missing)
 
-1. https://www.python.org/downloads/ adresine git
-2. Sarı **"Download Python 3.12"** butonuna bas (veya en güncel sürüm)
-3. İndirilen `.exe` dosyasını çalıştır
-4. **ÇOK ÖNEMLİ:** İlk ekrandaki **"Add Python to PATH"** kutucuğunu işaretle (yoksa sonradan komutlar çalışmaz)
-5. "Install Now" tuşuna bas, kurulumu bekle
-6. Bittiğinde PowerShell'i kapat ve yeniden aç (PATH değişikliklerinin geçerli olması için)
-7. Adım 3.1'i tekrar yap, artık Python görmeli
+1. Go to https://www.python.org/downloads/
+2. Click the yellow **"Download Python 3.12"** button (or the latest version)
+3. Run the downloaded `.exe`
+4. **VERY IMPORTANT:** on the first screen, tick **"Add Python to PATH"** (otherwise the commands below won't work)
+5. Click "Install Now" and wait
+6. When it finishes, close and reopen PowerShell (so the PATH change takes effect)
+7. Repeat Step 3.1 — Python should now be found
 
-### Adım 3.3 — Proje klasörünü al
+### Step 3.3 — Get the project folder
 
-Projeyi sana gönderene göre:
-- **ZIP olarak aldıysan:** Bir yere çıkar (örn. `Belgeler\kalman_proje\`)
-- **GitHub'dan klonladıysan:** `git clone <URL>` ile aldığın klasörü kullan
+Depending on how you received the project:
+- **As a ZIP:** extract it somewhere (e.g. `Documents\anc_project\`)
+- **From GitHub:** use the folder you got with `git clone <URL>`
 
-Klasörün içinde `src/`, `scripts/`, `app/` gibi alt klasörler olmalı.
+The folder should contain subfolders like `src/`, `scripts/`, `app/`.
 
-### Adım 3.4 — Proje klasörüne git (terminalde)
+### Step 3.4 — Go to the project folder (in the terminal)
 
-PowerShell'de proje klasörüne git:
+In PowerShell, change into the project folder:
 
 ```powershell
-cd "C:\Users\KULLANICI_ADIN\Belgeler\kalman_proje"
+cd "C:\Users\YOUR_USERNAME\Documents\anc_project"
 ```
 
-(Yukarıdaki yolu kendi durumuna göre değiştir. `cd` komutu "klasöre git" demek.)
+(Adjust the path to your setup. `cd` means "change directory".)
 
-İçinde olduğunu doğrulamak için:
+To verify you're in the right place:
 
 ```powershell
 ls
 ```
 
-Şöyle bir şeyler görmeli: `src`, `scripts`, `app`, `requirements.txt`, `README.md`...
+You should see things like: `src`, `scripts`, `app`, `requirements.txt`, `README.md`...
 
-### Adım 3.5 — Gerekli paketleri yükle
+### Step 3.5 — Install the required packages
 
 ```powershell
 pip install -r requirements.txt
 ```
 
-Bu komut yaklaşık **1-3 dakika** sürer. Şunları yükler:
-- NumPy (matematiksel hesaplamalar)
-- SciPy (sinyal işleme)
-- Matplotlib (grafikler)
-- Soundfile (ses dosyaları)
-- Streamlit (arayüz)
+This takes about **1–3 minutes** and installs:
+- NumPy (numerical computation)
+- SciPy (signal processing)
+- Matplotlib (plots)
+- Soundfile (audio files)
+- Streamlit (the UI)
 
-Sona "Successfully installed..." yazısı gelirse tamamdır.
+If it ends with "Successfully installed..." you're done.
 
-**Hata alırsan:** Adım 7 (Sorun Giderme) bölümüne bak.
+**If you get an error:** see Section 7 (Troubleshooting).
 
 ---
 
-## 4. Demoyu çalıştırma
+## 4. Running the demo
 
-### Adım 4.1 — Streamlit'i başlat
+### Step 4.1 — Start Streamlit
 
-Hâlâ proje klasöründeyken PowerShell'de:
+Still inside the project folder, run:
 
 ```powershell
 streamlit run app/streamlit_app.py
 ```
 
-İlk çalıştırırken e-mail soracak — direkt **enter**'a basıp geçebilirsin (zorunlu değil).
+The first run may ask for an e-mail — just press **enter** to skip (it's optional).
 
-Sonra terminalde şöyle bir mesaj göreceksin:
+The terminal will then show something like:
 
 ```
 You can now view your Streamlit app in your browser.
@@ -125,214 +125,217 @@ Local URL: http://localhost:8501
 Network URL: http://192.168.x.x:8501
 ```
 
-### Adım 4.2 — Tarayıcıyı aç
+### Step 4.2 — Open the browser
 
-**Otomatik açılırsa:** harika, hazırsın.
+**If it opens automatically:** great, you're set.
 
-**Otomatik açılmazsa:** Chrome / Edge / Firefox aç ve adres çubuğuna **`http://localhost:8501`** yaz, enter'a bas.
+**If not:** open Chrome / Edge / Firefox and type **`http://localhost:8501`** into the address bar.
 
-Karşına demo arayüzü çıkacak.
+The demo interface will appear.
 
-### Adım 4.3 — Demoyu kapatmak
+### Step 4.3 — Stopping the demo
 
-Terminal penceresinde **Ctrl + C** tuşlarına bas. Sunucu kapanır.
+Press **Ctrl + C** in the terminal window. The server shuts down.
 
 ---
 
-## 5. Arayüz rehberi
+## 5. Interface guide
 
-Arayüzde 2 ana alan var:
+The interface has 2 main areas:
 
-### 5.1 Sol panel (sidebar) — ayarlar
+### 5.1 Left panel (sidebar) — settings
 
-#### 🚀 Demo presets (en üstte — kestirme)
-Üç hazır buton: **IMM-KF (v5)**, **Quiet-Kalman trap**, **NLMS baseline**. Birine basınca
-algoritma + parametreler otomatik kurulur ve simülasyon **kendiliğinden başlar** — aşağıdaki
-ayarlarla tek tek uğraşmak istemiyorsan buradan başla.
+#### 🚀 Demo presets (at the top — the shortcut)
+Three ready-made buttons: **IMM-KF (v5)**, **Quiet-Kalman trap**, **NLMS baseline**. Clicking
+one configures the algorithm + parameters and **starts the simulation automatically** — start
+here if you don't want to set everything below by hand.
 
-#### Audio source (ses kaynağı)
-- **Synthetic:** Hazır sentetik senaryo
-- **Upload WAV:** Kendi ses dosyanı yükle
+#### Audio source
+- **Synthetic:** built-in synthetic scenario
+- **Upload WAV:** use your own audio file
 
-#### Synthetic seçildiğinde:
-- **Quiet / Traffic / Wind / Babble sliders:** Her gürültü tipinin süresi (saniye). Mesela quiet=5, traffic=10 dersen önce 5 saniye sessiz, sonra 10 saniye trafik gürültüsü olur.
-- **Mode-conditioned plants:** İşaretli bırak — daha zorlu (dinamik) bir test. Bu seçenek her gürültü tipinde kulaklığın akustik ortamının da değiştiğini simüle eder.
-- **Random seed:** Aynı rastgele test için aynı sayıyı kullan. Farklı senaryolar için değiştir (1-9999 arası).
+#### When Synthetic is selected:
+- **Quiet / Traffic / Wind / Babble sliders:** duration (seconds) of each noise type. E.g. quiet=5, traffic=10 gives 5 s of silence followed by 10 s of traffic noise.
+- **Mode-conditioned plants:** leave it checked — the harder (dynamic) test. It simulates the acoustic environment of the earbud changing along with each noise type.
+- **Random seed:** use the same number to repeat the same random test; change it (1–9999) for different scenarios.
 
-#### Upload WAV seçildiğinde:
-- WAV dosyanı sürükle veya "Browse files" ile seç. Otomatik olarak 16 kHz'e dönüştürülür.
+#### When Upload WAV is selected:
+- Drag your WAV in or pick it via "Browse files". It is converted to 16 kHz automatically.
 
-#### Method (algoritma) — 3 seçenek:
-- **NLMS:** Klasik adaptif filtre, endüstri standardı
-- **Kalman (single mode):** Tek-modlu Bayesian filtre, sabit ayarlı
-- **IMM-KF (4 modes):** Bu projenin önerdiği akıllı Bayesian filtre
+#### Method — 3 options:
+- **NLMS:** the classical adaptive filter, industry standard
+- **Kalman (single mode):** single-mode Bayesian filter, fixed tuning
+- **IMM-KF (4 modes):** the smart Bayesian filter this project proposes
 
 #### Filter length L:
-FIR filtre uzunluğu. **64'te bırak** — değiştirmeye gerek yok.
+FIR filter length. **Leave it at 64** — no need to change.
 
-#### Yönteme göre değişen ayar:
-- **NLMS seçtiysen:** `µ` (step size, adaptasyon hızı). 0.10 dene başlangıçta.
-- **Kalman seçtiysen:** `log10(σ_q²)` ve `log10(σ_r²)` — bu Q ve R değerlerinin 10 üssü cinsinden ifadesi. Yavaş Kalman için: Q=-12, R=0. Hızlı Kalman için: Q=-5, R=2.
-- **IMM seçtiysen:** `Likelihood window` — mod kararının zaman pencereli yumuşatması. **200'de bırak.**
+#### Method-specific setting:
+- **If NLMS:** `µ` (step size, adaptation speed). Try 0.10 to start.
+- **If Kalman:** `log10(σ_q²)` and `log10(σ_r²)` — Q and R expressed as powers of 10. Slow Kalman: Q=-12, R=0. Fast Kalman: Q=-5, R=2.
+- **If IMM:** `Likelihood window` — temporal smoothing of the mode decision. **Leave at 200.** An expander below shows the v5 per-mode (Q, R) calibration used in the report.
 
 #### Compute backend
-- **Python NumPy:** Varsayılan; IMM'in mod-posteriörü grafiği için gerekli.
-- **Pure C / OpenBLAS:** C portu derlenmişse görünür (bkz. README, kurulum bölümü).
-  ~9 kat hızlı, sonuç bire bir aynı.
+- **Python NumPy:** the default; required for the IMM mode-posterior plot.
+- **Pure C / OpenBLAS:** appear if the C port is compiled (see the README installation
+  section). ~9× faster, bit-identical results.
 
-#### Run butonu
-Mavi büyük tuş — ayarları elle kurduysan basacaksın (preset kullandıysan gerek yok).
+#### Run button
+The big blue button — press it after configuring things by hand (not needed if you used a preset).
 
-### 5.2 Ana panel — sonuçlar
+### 5.2 Main panel — results
 
-Run bittikten sonra (algoritma ve backend'e göre 5 saniye – 3 dakika sürer):
+After a run finishes (5 seconds to 3 minutes depending on algorithm and backend):
 
-#### Run seçici ve geçmiş
-Aynı oturumdaki **her koşu hafızada tutulur** (en fazla 8). Sonuçların üstündeki
-**"📂 Showing results of run"** menüsünden eski bir koşuyu seçersen tüm kartlar,
-sesler ve grafikler **anında** o koşuya döner — yeniden hesaplama yok. Altta açılan
-**"📚 Compare with previous runs"** tablosunda koşular yan yana (her satırda kalıntının
-ses oynatıcısı da var).
+#### Run selector and history
+**Every run in the session is kept** (up to 8). Pick an older run from the
+**"📂 Showing results of run"** menu above the results and all cards, audio and plots
+switch to that run **instantly** — nothing is recomputed. The
+**"📚 Compare with previous runs"** expander shows the runs side by side (each row
+includes an audio player for the residual).
 
-#### Üst kısım: 2 sıra KPI kartı
-- **Overall NR:** Toplam gürültü azalması (dB). **Yüksek olsun.**
-- **Audio length / Mode tracking / backend hızı (µs-sample, RTF):** koşu bilgileri
-- İkinci sıra **algı metrikleri:** algılanan ses düşüşü dB(A), alçak/yüksek bant NR,
-  müziksel-gürültü indeksi (düşük = daha doğal kalıntı)
+#### Top area: 2 rows of KPI cards
+- **Overall NR:** total noise reduction (dB). **Higher is better.**
+- **Audio length / Mode tracking / backend speed (µs-sample, RTF):** run info
+- Second row, **perceptual metrics:** perceived loudness drop in dB(A), low/high-band NR,
+  musical-noise index (lower = more natural residual)
 
-#### Audio comparison (ses karşılaştırma)
-**İki ses oynatıcı:**
-- **Solda:** Orijinal gürültü d(k) — ANC kapalıyken kulağına gelen
-- **Sağda:** ANC sonrası kalan e(k) — ANC açıkken kulağına gelen
+#### Audio comparison
+**Two audio players:**
+- **Left:** the original noise d(k) — what reaches your ear with ANC off
+- **Right:** the residual e(k) — what reaches your ear with ANC on
 
-**Sırayla ikisini de dinle**, farkı kulağınla duyuyor musun? Bu demonun en güzel kısmı.
-(Sidebar'daki "virtual headphone" kutusunu işaretlersen, seviye farkını koruyan
-kulaklık-simülasyonu sürümünü dinlersin.)
+**Listen to both in turn** — can you hear the difference? This is the best part of the demo.
+(Tick the "virtual headphone" box in the sidebar to hear the loudness-preserving
+headphone-simulation version instead.)
 
-#### Visualization (görselleştirme) — 6 sekme:
-- **📈 Time domain:** Dalga şekilleri (üstte orijinal, altta ANC sonrası). Genliğin azalması beklenir.
-- **🌈 Spectrogram:** Önce/sonra spektrogramları, ortak renk skalası — ANC açılınca alçak bant kararır.
-- **📉 NR over time:** Zaman içinde NR'nin değişimi (dB grafiği). Yüksek = iyi.
-- **🎯 Mode posteriors:** Sadece IMM'de anlamlı. IMM'in her an hangi modu seçtiğini gösterir.
-- **🎚️ NR per frequency:** 1/3-oktav bantlarda azaltım — aktif ANC alçak frekanslarda çalışır.
-- **🆚 Overlay runs:** Geçmişteki koşuların NR eğrileri **tek eksende üst üste** — IMM ile
-  sabit filtre arasındaki farkı tek grafikte görmenin en hızlı yolu.
+#### Visualization — 6 tabs:
+- **📈 Time domain:** waveforms (original on top, post-ANC below). Expect the amplitude to shrink.
+- **🌈 Spectrogram:** before/after spectrograms on a shared color scale — the low band goes dark when ANC is on.
+- **📉 NR over time:** NR through time (dB plot). Higher = better.
+- **🎯 Mode posteriors:** meaningful for IMM only. Shows which mode the IMM picks at every instant.
+- **🎚️ NR per frequency:** reduction in 1/3-octave bands — active ANC works at low frequencies.
+- **🆚 Overlay runs:** NR curves of past runs **on one axis** — the fastest way to see the
+  IMM-vs-fixed-filter gap in a single plot.
 
 ---
 
-## 6. Önerilen denemeler
+## 6. Suggested experiments
 
-Sırayla şunları dene, sonuçları karşılaştır:
+Try these in order and compare the results:
 
-### Deney 1 — IMM'in temel performansı
-1. Synthetic seç, default ayarları kullan (her mod 5 saniye)
-2. Mode-conditioned plants **işaretli kalsın**
-3. Method: **IMM-KF**
-4. Run'a bas (~30 saniye sürer)
-5. **Ses A/B'sini dinle, NR'a bak**
-6. Mode posteriors sekmesini aç — IMM modları nasıl tanıdı?
+### Experiment 1 — IMM's baseline performance
+1. Select Synthetic, keep the defaults (5 s per mode)
+2. Keep mode-conditioned plants **checked**
+3. Method: **IMM-KF** (or just press the 🏆 preset)
+4. Run (~30 s)
+5. **Listen to the audio A/B, check the NR**
+6. Open the Mode posteriors tab — how did the IMM track the modes?
 
-### Deney 2 — IMM vs klasik NLMS
-1. Aynı senaryo, aynı seed (örn. 7)
+### Experiment 2 — IMM vs classical NLMS
+1. Same scenario, same seed (e.g. 7)
 2. Method: **NLMS**, µ = 0.10
-3. Run, sonra NR ve sesi karşılaştır
-4. IMM'in NR'ı klasik yöntemden büyük mü? **Beklenen evet.**
+3. Run, then compare NR and audio
+4. Is the IMM's NR higher than the classical method's? **Expected: yes.**
 
-### Deney 3 — Yavaş Kalman çöküşü (projenin asıl bulgusu)
-1. Aynı senaryo (mode-conditioned plants **açık** kalsın — bu kritik)
-2. Sidebar'ın en üstündeki **🪤 Quiet-Kalman trap** preset'ine bas (elle kurmak istersen:
-   Kalman (single mode), `log_q = -12`, `log_r = 2`)
-3. Beklenti: **NR çok düşük** (örn. +2 dB), çünkü yavaş filtre ortam değişimlerine adapte olamıyor
-4. Sesi dinle — gürültü neredeyse hiç azalmamış gibi gelecek
-5. **🆚 Overlay runs** sekmesini aç: Deney 1'deki IMM eğrisiyle bu koşu aynı eksende —
-   fark tek bakışta görünür
+### Experiment 3 — the slow-Kalman collapse (the project's central finding)
+1. Same scenario (keep mode-conditioned plants **on** — this is critical)
+2. Press the **🪤 Quiet-Kalman trap** preset at the top of the sidebar (or set it up
+   manually: Kalman (single mode), `log_q = -12`, `log_r = 2`)
+3. Expectation: **very low NR** (e.g. +2 dB), because the slow filter cannot adapt to environment changes
+4. Listen — the noise will sound almost untouched
+5. Open the **🆚 Overlay runs** tab: this run and Experiment 1's IMM curve share one
+   axis — the gap is visible at a glance
 
-Bu deney projenin asıl tezini doğruluyor: "tek bir sabit ayar, çevre değişen ortamda yetersizdir."
+This experiment confirms the project's main thesis: "a single fixed tuning fails in changing environments."
 
-### Deney 4 — Kendi sesinle test
-1. Telefonla 5-10 saniyelik bir gürültü kaydı yap (trafik, kafe, vb.)
-2. WAV formatında kaydet, bilgisayara aktar
-3. Demoda "Upload WAV" seç, dosyayı yükle
-4. IMM seç, Run
-5. Kendi gürültünde algoritma nasıl çalıştı?
+### Experiment 4 — test with your own audio
+1. Record 5–10 seconds of noise with your phone (traffic, café, etc.)
+2. Save as WAV and copy it to your computer
+3. Select "Upload WAV" in the demo and upload it
+4. Pick IMM, Run
+5. How did the algorithm do on *your* noise?
 
 ---
 
-## 7. Sorun giderme
+## 7. Troubleshooting
 
 ### "streamlit: command not found"
-Streamlit kurulu ama PATH'te değil. Şunu dene:
+Streamlit is installed but not on PATH. Try:
 ```powershell
 python -m streamlit run app/streamlit_app.py
 ```
 
 ### "ModuleNotFoundError: No module named 'XYZ'"
-Paketler düzgün yüklenmemiş. Tekrar yükle:
+Packages didn't install cleanly. Reinstall:
 ```powershell
 pip install -r requirements.txt --upgrade
 ```
 
 ### "pip: command not found"
-Python kurulumun eski veya bozuk. Adım 3.2'yi yeniden yap, **"Add Python to PATH"** kutucuğunun işaretli olduğundan emin ol.
+Your Python install is old or broken. Redo Step 3.2 and make sure **"Add Python to PATH"** is ticked.
 
-### Streamlit açıldı ama "Network error" gösteriyor
-Anti-virüs veya güvenlik duvarı engelliyor olabilir. Geçici olarak kapatıp dene. Çalışırsa exception kuralı ekle.
+### Streamlit opens but shows "Network error"
+Antivirus or firewall may be blocking it. Disable temporarily to test; add an exception if that fixes it.
 
-### Tarayıcıda açıldı ama Run'a basınca hata
-Terminale dön — orada Python hatası görürsen, bana göster.
+### The browser opens but Run throws an error
+Check the terminal — the Python traceback there tells you what went wrong.
 
-### Demo açıldı ama çok yavaş çalışıyor
-IMM-KF Python'da yavaş. Daha hızlı sonuç için:
-- Senaryo sürelerini kısalt (her segment için 3-5 sn yeter)
-- Veya NLMS / Kalman seç (çok daha hızlı)
+### The demo runs but is very slow
+IMM-KF is slow in pure Python. For faster results:
+- Shorten the scenario segments (3–5 s each is enough)
+- Or pick NLMS / Kalman (much faster)
+- Or compile the C port and select the **Pure C** backend (see the README)
 
-### Ses çalmıyor / dinleyemiyorum
-- Tarayıcıdaki ses oynatıcısının üzerine tıklayıp play tuşuna bas
-- Tarayıcı izin istiyorsa "izin ver" de
-- Sistem ses çıkışını kontrol et
+### No sound / can't listen
+- Click the audio player and press play
+- If the browser asks for permission, allow it
+- Check your system audio output
 
-### Aynı port hatası (port 8501 already in use)
-Önceki Streamlit sunucusu hâlâ açık. Terminale dön ve Ctrl+C bas. Veya:
+### Port already in use (port 8501)
+A previous Streamlit server is still running. Go to its terminal and press Ctrl+C. Or:
 ```powershell
 streamlit run app/streamlit_app.py --server.port 8502
 ```
-Sonra tarayıcıda `http://localhost:8502` aç.
+Then open `http://localhost:8502`.
 
 ---
 
-## 8. Bonus: Komut satırından scriptleri çalıştırmak
+## 8. Bonus: running the scripts from the command line
 
-Demo dışında, projeyi komut satırından çalıştırmak istersen:
+Outside the demo, you can drive the project from the command line:
 
 ```powershell
-python -m scripts.01_inspect_paths       # Akustik yol görselleri
-python -m scripts.02_inspect_scenario    # Senaryo görselleştirme + WAV
-python -m scripts.03_baseline_run        # Statik baseline karşılaştırma
-python -m scripts.05_dynamic_imm         # Dinamik IMM testi
-python -m scripts.06_monte_carlo --runs 5  # Monte Carlo (5 run, ~10 dk)
+python -m scripts.01_inspect_paths       # acoustic path plots
+python -m scripts.02_inspect_scenario    # scenario visualization + WAV
+python -m scripts.03_baseline_run        # static baseline comparison
+python -m scripts.05_dynamic_imm         # dynamic IMM test
+python -m scripts.06_monte_carlo --runs 5  # Monte Carlo (5 runs, ~10 min)
 ```
 
-Çıktılar `figures/` klasörüne kaydedilir.
+Outputs are saved into the `figures/` folder.
 
 ---
 
-## 9. Hızlı referans
+## 9. Quick reference
 
-| Ne istiyorsun? | Komut / İşlem |
+| What do you want? | Command / action |
 |---|---|
-| Python var mı kontrol | `python --version` |
-| Paketleri yükle | `pip install -r requirements.txt` |
-| Demoyu başlat | `streamlit run app/streamlit_app.py` |
-| Demoyu durdur | Terminalde Ctrl+C |
-| Tarayıcıda aç | `http://localhost:8501` |
-| Demo kapanmadan tarayıcıyı yenile | Tarayıcıda F5 |
+| Check Python | `python --version` |
+| Install packages | `pip install -r requirements.txt` |
+| Start the demo | `streamlit run app/streamlit_app.py` |
+| Stop the demo | Ctrl+C in the terminal |
+| Open in browser | `http://localhost:8501` |
+| Refresh the page without restarting | F5 in the browser |
 
 ---
 
-## İletişim
+## Contact
 
-Projenin teknik dokümantasyonu için [README.md](README.md) ve final raporu (`EE4084_Final_Report.pdf`) bak.
+For the technical documentation see [README.md](../README.md); for the methodology and
+results see the report under [`report/`](../report/).
 
-Demoyu çalıştırırken takıldığın bir adım varsa, hangi adımda ne hatası aldığını not et — terminal çıktısının tamamı çok yardımcı olur.
+If you get stuck on a step, note which step and the exact error — the full terminal
+output helps a lot.
 
-İyi denemeler!
+Happy experimenting!

@@ -10,7 +10,7 @@ env/
 .ipynb_checkpoints/
 
 # ---- Generated outputs ----
-figures/
+/figures/
 *.wav
 *.flac
 *.npz
@@ -34,6 +34,8 @@ noise_samples/**/*.mp3
 *.synctex.gz
 *.out
 *.toc
+*.bbl
+*.blg
 
 # ---- OS / editors / tooling ----
 .DS_Store
