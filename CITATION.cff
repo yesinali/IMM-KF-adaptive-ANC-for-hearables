@@ -1,0 +1,24 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+type: software
+title: "Adaptive Active Noise Cancellation for Hearables using Interacting Multiple Model (IMM) Filters"
+authors:
+  - family-names: "Yesin"
+    given-names: "Muhammed Ali"
+  - family-names: "Takcı"
+    given-names: "Mehmet Akif"
+year: 2026
+url: "https://github.com/yesinali/IMM-KF-adaptive-ANC-for-hearables"
+abstract: >-
+  A Bayesian adaptive ANC controller for hearables: four parallel Kalman
+  filters (one per acoustic environment) blended by an Interacting Multiple
+  Model posterior, with a virtual-headphone listening test bench, perceptual
+  metrics, and a real-time-capable C port. EE4084 course project,
+  Marmara University.
+keywords:
+  - active noise cancellation
+  - Kalman filter
+  - interacting multiple model
+  - Bayesian filtering
+  - hearables
+  - adaptive filtering

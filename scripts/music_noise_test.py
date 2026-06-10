@@ -41,6 +41,7 @@ from src import scenario as sc
 from src.filters import NLMSFilter, KalmanANCFilter
 from src.imm import IMMKalmanANC
 from src.metrics import overall_nr_db
+from src.music import load_music_clip  # noqa: F401  (re-exported; original home)
 
 
 TRAJ = (
@@ -60,30 +61,7 @@ V6_MODE_PARAMS = (
 
 
 # ============== Audio I/O ====================================================
-
-def load_music_clip(path: Path, target_fs: int, duration_sec: float,
-                    target_rms: float = 1.0) -> np.ndarray:
-    audio, fs = sf.read(path, dtype="float64", always_2d=False)
-    if audio.ndim > 1:
-        audio = audio.mean(axis=1)
-    if fs != target_fs:
-        from math import gcd
-        g = gcd(fs, target_fs)
-        up = target_fs // g
-        dn = fs // g
-        audio = resample_poly(audio, up, dn)
-    n_target = int(duration_sec * target_fs)
-    if len(audio) >= n_target:
-        start = (len(audio) - n_target) // 2
-        audio = audio[start:start + n_target]
-    else:
-        reps = (n_target // len(audio)) + 1
-        audio = np.tile(audio, reps)[:n_target]
-    rms = float(np.sqrt(np.mean(audio ** 2)))
-    if rms > 0:
-        audio = audio * (target_rms / rms)
-    return audio.astype(np.float64)
-
+# load_music_clip moved to src/music.py (shared with the app and the test bench).
 
 def normalize_for_wav(x: np.ndarray) -> np.ndarray:
     peak = float(np.max(np.abs(x)) + 1e-12)

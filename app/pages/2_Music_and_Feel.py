@@ -26,7 +26,7 @@ from src import config as cfg                                 # noqa: E402
 from src import scenario as sc                                # noqa: E402
 from src import headphone as hp                               # noqa: E402
 from src import testbench as tb                               # noqa: E402
-from scripts.music_noise_test import load_music_clip          # noqa: E402
+from src.music import load_music_clip                         # noqa: E402
 
 st.set_page_config(page_title="Music and Feel", page_icon="🎵", layout="wide")
 MUSIC_DIR = ROOT / "musics"

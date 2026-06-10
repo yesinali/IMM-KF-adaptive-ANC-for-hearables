@@ -5,6 +5,7 @@
 > an Interacting Multiple Model (IMM) posterior, so the controller automatically
 > adopts the right adaptation speed for whatever the wearer walks into.
 
+![CI](https://github.com/yesinali/IMM-KF-adaptive-ANC-for-hearables/actions/workflows/ci.yml/badge.svg)
 ![Python](https://img.shields.io/badge/python-3.10%2B-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Status](https://img.shields.io/badge/status-research%20prototype-orange)
@@ -80,6 +81,7 @@ adaptive-anc-imm-kf/
 │   ├── metrics.py              NR, misalignment, NEES/NIS consistency
 │   ├── perceptual.py           dBA loudness, band-split NR, musical-noise index, SI-SDR
 │   ├── headphone.py            virtual-headphone render (passive + LF-ANC, shared gain)
+│   ├── music.py                music-clip loader shared by the app and the test bench
 │   ├── testbench.py            shared scenario→algorithm→metrics orchestration
 │   └── c_backend.py            wrapper around the C-port binaries
 ├── scripts/                    runnable experiments & the test-bench renderer
@@ -91,6 +93,7 @@ adaptive-anc-imm-kf/
 ├── musics/                     drop your own program music here (see its README)
 ├── docs/USER_GUIDE.md          step-by-step quick-start guide
 ├── report/                     IEEE-style project report (LaTeX sources + PDF)
+├── tests/                      smoke tests (run on every push via GitHub Actions)
 └── requirements.txt
 ```
 
@@ -195,6 +198,11 @@ Writes a coherent WAV set, a metric table, `metrics.json` and plots into
 
 All script outputs land in `figures/` (git-ignored).
 
+> **Naming convention:** numbered scripts (`01_…`, `02_…`) form the experiment pipeline in
+> the order we ran it for the report — letter suffixes (`03b_`, `07b_`) are follow-ups to
+> the same stage, and `20_render_testbench` opens the 20-range for the listening bench.
+> Unnumbered scripts (`full_metrics`, `c_port_compare`, …) are standalone utilities.
+
 ### Bring your own data
 
 The repository ships **no audio** (copyright + size). To use real material:
@@ -244,5 +252,7 @@ Released under the [MIT License](LICENSE).
 
 ## Acknowledgements
 
-Developed for **EE4084**, Marmara University. Synthetic noise/path generators stand in for the
-DEMAND and ESC-50 environmental-audio datasets.
+Developed for **EE4084**, Marmara University. The evaluation uses synthetic noise/path
+generators by default; the recorded-noise path was verified with clips from the
+[DEMAND](https://zenodo.org/records/1227121) (CC BY 4.0) and
+[ESC-50](https://github.com/karolpiczak/ESC-50) (CC BY-NC 3.0) datasets.

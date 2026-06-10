@@ -39,7 +39,7 @@ from src import scenario as sc
 from src import headphone as hp
 from src import perceptual as pc
 from src import testbench as tb
-from scripts.music_noise_test import load_music_clip
+from src.music import load_music_clip
 
 
 # ---- printing ---------------------------------------------------------------
